@@ -1,13 +1,9 @@
-<!-- =================================================================== -->
-<!--       檔案 1: index.njk (已更新)            -->
-<!-- =================================================================== -->
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PHDEV Notebooks</title>
-  <!-- 您的 CSS 檔案會被 Eleventy 複製到輸出的網站中 -->
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -15,7 +11,6 @@
     <h1>歡迎來到 PHDEV Notebooks</h1>
   </header>
   <main>
-
     <!-- 檢視模式切換器 -->
     <div class="controls-wrapper">
       <div class="view-switcher">
@@ -30,27 +25,27 @@
     
     <!-- 內容容器 -->
     <div class="card-grid" id="post-container">
-      <!-- "建立新筆記本" 的卡片已被移除 -->
-
-    {# 使用 _data/posts.js 提供的全域資料 posts #}
-    {%- for post in posts -%}
-      <article class="card">
-        {# 連結到由 post-page.njk 產生的正確頁面 URL #}
-        <a href="/notebooks/posts/{{ post.slug }}/" class="card-link-wrapper">
-          <div class="card-icon">{{ post.icon or '📄' }}</div>
-          <div class="card-content">
-            <h2>{{ post.title }}</h2>
-            <div class="card-meta">
-              <span>{{ post.date | date('YYYY-MM-DD') }}</span>
-              {% if post.tags and post.tags.length > 0 %}
-                <span>・</span>
-                <span>{{ post.tags | length }} 個標籤</span>
-              {% endif %}
+      {# 使用 _data/posts.js 提供的全域資料 posts #}
+      {%- for post in posts -%}
+        <article class="card">
+          {# *** 關鍵修改 *** #}
+          {# 1. href 直接使用您 JSON 檔案中的 "url" 欄位 #}
+          {# 2. target="_blank" 會在新分頁中開啟連結 #}
+          <a href="{{ post.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
+            <div class="card-icon">{{ post.icon or '📄' }}</div>
+            <div class="card-content">
+              <h2>{{ post.title }}</h2>
+              <div class="card-meta">
+                <span>{{ post.date | date('YYYY-MM-DD') }}</span>
+                {% if post.tags and post.tags.length > 0 %}
+                  <span>・</span>
+                  <span>{{ post.tags | length }} 個標籤</span>
+                {% endif %}
+              </div>
             </div>
-          </div>
-        </a>
-      </article>
-    {%- endfor -%}
+          </a>
+        </article>
+      {%- endfor -%}
     </div>
   </main>
 
