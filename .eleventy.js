@@ -11,24 +11,7 @@ module.exports = function(eleventyConfig) {
 
   // （可選）監控 CSS 檔案的變更
   eleventyConfig.addWatchTarget("./css/");
-
-  // *** DEBUGGING: 在建置後，將所有集合的資訊印出來 ***
-  eleventyConfig.on('afterBuild', async () => {
-    // 透過非同步的方式取得完整的集合資料
-    const collections = await eleventyConfig.getCollections();
-    console.log("--- DEBUGGING COLLECTIONS ---");
-    // 印出所有可用的集合名稱
-    console.log("Available collections:", Object.keys(collections));
-    
-    // 檢查 'post' 集合是否存在，以及裡面有多少項目
-    if (collections.post) {
-      console.log(`'post' collection found with ${collections.post.length} items.`);
-    } else {
-      console.log("'post' collection NOT found.");
-    }
-    console.log("---------------------------");
-  });
-
+  
   // 返回 Eleventy 的設定物件
   return {
     dir: {
@@ -37,12 +20,11 @@ module.exports = function(eleventyConfig) {
       data: "_data",
       output: "_site"
     },
-    // Eleventy 會處理的檔案格式
+    // 恢復預設，我們不再需要手動處理 json
     templateFormats: [
       "md",
       "njk",
       "html",
-      "json"
     ],
   };
 };

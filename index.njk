@@ -32,20 +32,19 @@
     <div class="card-grid" id="post-container">
       <!-- "建立新筆記本" 的卡片已被移除 -->
 
-    {# 使用 Eleventy 的 collections API 來讀取所有標籤為 'post' 的筆記 #}
-    {%- for post in collections.post | reverse -%}
+    {# 使用 _data/posts.js 提供的全域資料 posts #}
+    {%- for post in posts -%}
       <article class="card">
-        {# 注意：現在連結會自動指向正確的 HTML 頁面 URL #}
-        <a href="{{ post.url }}" class="card-link-wrapper">
-          {# 資料現在存在於 post.data 物件中 #}
-          <div class="card-icon">{{ post.data.icon or '📄' }}</div>
+        {# 連結到由 post-page.njk 產生的正確頁面 URL #}
+        <a href="/notebooks/posts/{{ post.slug }}/" class="card-link-wrapper">
+          <div class="card-icon">{{ post.icon or '📄' }}</div>
           <div class="card-content">
-            <h2>{{ post.data.title }}</h2>
+            <h2>{{ post.title }}</h2>
             <div class="card-meta">
-              <span>{{ post.data.date | date('YYYY-MM-DD') }}</span>
-              {% if post.data.tags and post.data.tags.length > 0 %}
+              <span>{{ post.date | date('YYYY-MM-DD') }}</span>
+              {% if post.tags and post.tags.length > 0 %}
                 <span>・</span>
-                <span>{{ post.data.tags | length }} 個標籤</span>
+                <span>{{ post.tags | length }} 個標籤</span>
               {% endif %}
             </div>
           </div>
