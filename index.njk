@@ -32,25 +32,26 @@
     <div class="card-grid" id="post-container">
       <!-- "建立新筆記本" 的卡片已被移除 -->
 
-      {# 使用我們在 .eleventy.js 中建立的全域變數 postsData #}
-      {%- for item in postsData | reverse -%}
-        <article class="card">
-          {# 這裡不需要 .data，因為我們直接處理了 JSON 內容 #}
-          <a href="{{ item.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
-            <div class="card-icon">{{ item.icon or '📄' }}</div> {# or '📄' 提供一個預設圖示 #}
-            <div class="card-content">
-              <h2>{{ item.title }}</h2>
-              <div class="card-meta">
-                <span>{{ item.date | date('YYYY-MM-DD') }}</span>
-                {% if item.tags and item.tags.length > 0 %}
-                  <span>・</span>
-                  <span>{{ item.tags | length }} 個標籤</span>
-                {% endif %}
-              </div>
+    {# 使用 Eleventy 的 collections API 來讀取所有標籤為 'post' 的筆記 #}
+    {%- for post in collections.post | reverse -%}
+      <article class="card">
+        {# 注意：現在連結會自動指向正確的 HTML 頁面 URL #}
+        <a href="{{ post.url }}" class="card-link-wrapper">
+          {# 資料現在存在於 post.data 物件中 #}
+          <div class="card-icon">{{ post.data.icon or '📄' }}</div>
+          <div class="card-content">
+            <h2>{{ post.data.title }}</h2>
+            <div class="card-meta">
+              <span>{{ post.data.date | date('YYYY-MM-DD') }}</span>
+              {% if post.data.tags and post.data.tags.length > 0 %}
+                <span>・</span>
+                <span>{{ post.data.tags | length }} 個標籤</span>
+              {% endif %}
             </div>
-          </a>
-        </article>
-      {%- endfor -%}
+          </div>
+        </a>
+      </article>
+    {%- endfor -%}
     </div>
   </main>
 
