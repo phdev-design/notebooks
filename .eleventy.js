@@ -25,10 +25,12 @@ module.exports = function(eleventyConfig) {
       output: "_site"
     },
     // Eleventy 會處理的檔案格式
+    // *** 關鍵修復：告訴 Eleventy 也要處理 .json 檔案 ***
     templateFormats: [
       "md",
       "njk",
       "html",
+      "json" // <--- 將這一行加進來
     ],
   };
 };
