@@ -21,11 +21,13 @@ jobs:
       - name: Checkout your repository
         uses: actions/checkout@v4
 
-      # 步驟 2: 設定 Node.js 環境
-      - name: Setup Node.js
+      # 步驟 2: 設定 Node.js 環境並啟用 npm 快取
+      - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          # 啟用 npm 快取
+          cache: 'npm'
 
       # 步驟 3: 安裝專案依賴套件並建置網站
       - name: Install dependencies and build site
