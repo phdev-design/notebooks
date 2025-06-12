@@ -1,0 +1,46 @@
+# 網站部署的自動化流程
+name: Deploy Eleventy to GitHub Pages
+
+on:
+  # 當推送到 main 分支時觸發
+  push:
+    branches:
+      - main
+  # 讓你可以手動觸發此流程
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    steps:
+      # 步驟 1: 取得你的程式碼
+      - name: Checkout your repository
+        uses: actions/checkout@v4
+
+      # 步驟 2: 設定 Node.js 環境
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      # 步驟 3: 安裝專案依賴套件並建置網站
+      - name: Install dependencies and build site
+        run: |
+          npm install
+          npm run build
+
+      # 步驟 4: 上傳建置好的網站成果
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Eleventy 預設會將網站建置到 _site 資料夾
+          path: '_site'
+
+      # 步驟 5: 部署到 GitHub Pages
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
