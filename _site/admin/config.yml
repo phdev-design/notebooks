@@ -1,0 +1,24 @@
+# admin/config.yml
+local_backend: true # <-- 新增這一行
+
+backend:
+  name: git-gateway
+  branch: main # 您的 Git 主要分支
+
+media_folder: "img" # 上傳的圖片會放在根目錄的 img 資料夾
+public_folder: "/img"
+
+collections:
+  - name: "links" # 集合的名稱
+    label: "專案連結" # 後台顯示的名稱
+    folder: "posts" # <-- 將 "_data/links" 修改為 "posts"
+    create: true # 允許建立新項目
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # 檔名格式
+    format: "json" # 儲存成 JSON 格式
+    fields: # 定義後台的每一個欄位
+      - { label: "標題", name: "title", widget: "string" }
+      - { label: "描述", name: "description", widget: "text" }
+      - { label: "連結網址", name: "url", widget: "string" }
+      - { label: "圖示 (Emoji)", name: "icon", widget: "string", required: false }
+      - { label: "日期", name: "date", widget: "datetime" }
+      - { label: "標籤", name: "tags", widget: "list", required: false }

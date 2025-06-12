@@ -1,0 +1,18 @@
+{
+  "name": "my-notebook-site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "eleventy --serve"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.1"
+  },
+  "dependencies": {
+    "nunjucks-date-filter": "^0.1.1"
+  }
+}

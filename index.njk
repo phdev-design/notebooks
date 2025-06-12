@@ -1,0 +1,82 @@
+<!-- =================================================================== -->
+<!--       檔案 1: index.njk (已更新)            -->
+<!-- =================================================================== -->
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PHDEV Notebooks</title>
+  <!-- 您的 CSS 檔案會被 Eleventy 複製到輸出的網站中 -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <h1>歡迎來到 PHDEV Notebooks</h1>
+  </header>
+  <main>
+
+    <!-- 檢視模式切換器 -->
+    <div class="controls-wrapper">
+      <div class="view-switcher">
+        <button id="grid-view-btn" class="view-btn active" aria-label="格狀檢視">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </button>
+        <button id="list-view-btn" class="view-btn" aria-label="列表檢視">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
+      </div>
+    </div>
+    
+    <!-- 內容容器 -->
+    <div class="card-grid" id="post-container">
+      <!-- "建立新筆記本" 的卡片已被移除 -->
+
+      {# 使用我們在 .eleventy.js 中建立的全域變數 postsData #}
+      {%- for item in postsData | reverse -%}
+        <article class="card">
+          {# 這裡不需要 .data，因為我們直接處理了 JSON 內容 #}
+          <a href="{{ item.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
+            <div class="card-icon">{{ item.icon or '📄' }}</div> {# or '📄' 提供一個預設圖示 #}
+            <div class="card-content">
+              <h2>{{ item.title }}</h2>
+              <div class="card-meta">
+                <span>{{ item.date | date('YYYY-MM-DD') }}</span>
+                {% if item.tags and item.tags.length > 0 %}
+                  <span>・</span>
+                  <span>{{ item.tags | length }} 個標籤</span>
+                {% endif %}
+              </div>
+            </div>
+          </a>
+        </article>
+      {%- endfor -%}
+    </div>
+  </main>
+
+  <!-- 這是瀏覽器端執行的 JavaScript 邏輯 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const gridViewBtn = document.getElementById('grid-view-btn');
+      const listViewBtn = document.getElementById('list-view-btn');
+      const postContainer = document.getElementById('post-container');
+
+      if (gridViewBtn && listViewBtn && postContainer) {
+        // 切換到格狀檢視
+        gridViewBtn.addEventListener('click', () => {
+          postContainer.classList.remove('list-view');
+          gridViewBtn.classList.add('active');
+          listViewBtn.classList.remove('active');
+        });
+
+        // 切換到列表檢視
+        listViewBtn.addEventListener('click', () => {
+          postContainer.classList.add('list-view');
+          listViewBtn.classList.add('active');
+          gridViewBtn.classList.remove('active');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

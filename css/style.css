@@ -1,0 +1,167 @@
+body {
+  margin: 0;
+  background-color: #131314;
+  color: #e8eaed;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+header {
+  padding: 24px 40px;
+}
+
+header h1 {
+  font-size: 2.5rem;
+  font-weight: 500;
+}
+
+main {
+  padding: 0 40px 40px 40px;
+}
+
+/* --- 檢視模式切換器 --- */
+.controls-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.view-switcher {
+  display: inline-flex;
+  background-color: #282a2c;
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid #5f6368;
+}
+
+.view-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  color: #9aa0a6; /* 非啟用狀態的圖示顏色 */
+}
+
+.view-btn:hover {
+  background-color: #3c4043;
+}
+
+.view-btn.active {
+  background-color: #347af2; /* 藍色背景表示啟用 */
+  color: #fff; /* 啟用狀態的圖示顏色 */
+}
+
+.view-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* --- 卡片模式 (預設) --- */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background-color: #1e1f20;
+  border-radius: 12px;
+  border: 1px solid #5f6368;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  aspect-ratio: 1 / 1; 
+}
+
+.card:hover {
+  background-color: #282a2b;
+  transform: translateY(-4px);
+}
+
+.card-link-wrapper {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 20px;
+  box-sizing: border-box; 
+}
+
+.card-icon {
+  font-size: 4rem;
+}
+
+.card-content h2 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0 0 8px 0;
+}
+
+.card-meta {
+  font-size: 0.8rem;
+  color: #bdc1c6;
+}
+
+.add-new-card {
+  background-color: transparent;
+  border-style: dashed;
+}
+
+.add-new-card a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-decoration: none;
+  color: #8ab4f8;
+  font-size: 1rem;
+  gap: 12px;
+}
+
+.add-new-card .plus-icon {
+  font-size: 2.5rem;
+  font-weight: 200;
+}
+
+/* --- 列表模式 --- */
+.card-grid.list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.card-grid.list-view .card {
+  width: 100%;
+  aspect-ratio: auto;
+  height: auto;
+}
+
+.card-grid.list-view .card-link-wrapper {
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 16px;
+}
+
+.card-grid.list-view .card-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.card-grid.list-view .card-content {
+  flex-grow: 1;
+}
+
+.card-grid.list-view .card-content h2 {
+   font-size: 1rem;
+   margin-bottom: 4px;
+}
+
+.card-grid.list-view .add-new-card {
+  display: none;
+}
