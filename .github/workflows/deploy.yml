@@ -29,9 +29,10 @@ jobs:
           # 啟用 npm 快取
           cache: 'npm'
 
-      # 步驟 3: 安裝專案依賴套件並建置網站
+      # 步驟 3: 安裝專案依賴套件並建置網站 (使用淘寶鏡像)
       - name: Install dependencies and build site
         run: |
+          npm config set registry https://registry.npmmirror.com
           npm install
           npm run build
 
