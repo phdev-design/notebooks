@@ -12,6 +12,9 @@ module.exports = function(eleventyConfig) {
   // （可選）監控 CSS 檔案的變更
   eleventyConfig.addWatchTarget("./css/");
   
+  // ✨ 加入這行，將 favicon.ico 複製到輸出的網站中
+  eleventyConfig.addPassthroughCopy("favicon.ico");
+
   // 返回 Eleventy 的設定物件
   return {
     dir: {
