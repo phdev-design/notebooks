@@ -165,3 +165,17 @@ main {
 .card-grid.list-view .add-new-card {
   display: none;
 }
+
+/* Header 樣式 */
+header {
+  display: flex; /* 使用 Flexbox 排版 */
+  align-items: center; /* 垂直置中對齊 */
+  gap: 1rem; /* 在 Logo 和標題之間增加一些間距 (例如 16px) */
+}
+
+/* Logo 圖片樣式 */
+.logo {
+  height: 50px; /* 設定 Logo 的高度，寬度會自動等比例縮放 */
+  width: auto;
+  border-radius: 8px; /* 讓 Logo 的邊角稍微圓滑一點，更好看 */
+}

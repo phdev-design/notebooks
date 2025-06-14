@@ -5,15 +5,19 @@ const dateFilter = require('nunjucks-date-filter');
 module.exports = function(eleventyConfig) {
   // 將整個 css 資料夾複製到輸出的網站中
   eleventyConfig.addPassthroughCopy("css");
+  
+  // 將 favicon.ico 複製到輸出的網站中
+  eleventyConfig.addPassthroughCopy("favicon.ico");
+
+  // ✨ 加入這行，將整個 img 資料夾複製過去
+  eleventyConfig.addPassthroughCopy("img");
 
   // 添加日期格式化篩選器
   eleventyConfig.addFilter('date', dateFilter);
 
   // （可選）監控 CSS 檔案的變更
   eleventyConfig.addWatchTarget("./css/");
-  
-  // ✨ 加入這行，將 favicon.ico 複製到輸出的網站中
-  eleventyConfig.addPassthroughCopy("favicon.ico");
+  eleventyConfig.addWatchTarget("./img/"); // 建議也監控圖片資料夾
 
   // 返回 Eleventy 的設定物件
   return {
