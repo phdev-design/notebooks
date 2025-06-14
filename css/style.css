@@ -166,16 +166,15 @@ main {
   display: none;
 }
 
-/* Header 樣式 */
+/* Header 的排版設定 */
 header {
-  display: flex; /* 使用 Flexbox 排版 */
-  align-items: center; /* 垂直置中對齊 */
-  gap: 1rem; /* 在 Logo 和標題之間增加一些間距 (例如 16px) */
+  display: flex;
+  align-items: center;
+  gap: 1rem; 
 }
 
-/* Logo 圖片樣式 */
+/* 關鍵！設定 Logo 的大小 */
 .logo {
-  height: 50px; /* 設定 Logo 的高度，寬度會自動等比例縮放 */
-  width: auto;
-  border-radius: 8px; /* 讓 Logo 的邊角稍微圓滑一點，更好看 */
+  height: 50px; /* <<-- 您可以調整這個數值！ */
+  width: auto;   /* 讓寬度自動等比例縮放，防止變形 */
 }
