@@ -25,7 +25,7 @@ jobs:
       - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           # 啟用 npm 快取
           cache: 'npm'
 
