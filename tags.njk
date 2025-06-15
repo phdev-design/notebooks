@@ -1,0 +1,54 @@
+{# tags.njk #}
+---
+# 使用我們在 .eleventy.js 中建立的 tagList 集合來進行分頁
+pagination:
+  data: collections.tagList
+  size: 1
+  alias: tag # 在這個範本中，每一個標籤的名稱會被稱為 'tag'
+# 為每個標籤頁面設定永久連結 (URL)，例如：/tags/醫學/
+permalink: "/tags/{{ tag | slug }}/index.html"
+---
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>標籤：{{ tag }} | PHDEV Notebooks</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header>
+  <a href="/" class="logo-link">
+    <img src="/img/logo.png" alt="PHDEV Notebooks Logo" class="logo">
+  </a>
+  <h1>標籤：{{ tag }}</h1>
+</header>
+<main>
+  <div class="card-grid">
+    {# 
+      11ty 的魔法：它會為每個標籤自動建立一個 collection。
+      我們可以直接使用 `collections[tag]` 來取得所有包含這個標籤的文章，
+      這比手動過濾 `collections.all` 更簡單、更高效！
+    #}
+    {%- for post in collections[tag] | reverse -%}
+      <article class="card">
+        <a href="{{ post.data.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
+          <div class="card-icon">{{ post.data.icon or '📄' }}</div>
+          <div class="card-content">
+            <h2>{{ post.data.title }}</h2>
+            <div class="card-meta">
+              <span>{{ post.data.date | date('YYYY-MM-DD') }}</span>
+            </div>
+          </div>
+        </a>
+      </article>
+    {%- endfor -%}
+  </div>
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="/tags" class="button-link">查看所有標籤</a>
+    <a href="/" class="button-link">返回首頁</a>
+  </div>
+</main>
+</body>
+</html>

@@ -178,3 +178,110 @@ header {
   height: 80px; /* <<-- 您可以調整這個數值！ */
   width: auto;   /* 讓寬度自動等比例縮放，防止變形 */
 }
+
+/* ================================================== */
+/* 以下是為標籤功能新增的樣式                 */
+/* ================================================== */
+
+/* --- 1. 標籤導覽列 (在文章列表上方) --- */
+
+.category-nav {
+  /* 與下方的內容隔開一些距離 */
+  margin-bottom: 32px;
+  padding: 16px;
+  /* 使用與檢視切換器類似的背景和邊框，保持風格一致 */
+  background-color: #1e1f20;
+  border: 1px solid #5f6368;
+  border-radius: 12px;
+}
+
+.category-list {
+  /* 讓標籤可以並排，並在空間不夠時自動換行 */
+  display: flex;
+  flex-wrap: wrap;
+  /* 水平置中顯示 */
+  justify-content: center; 
+  /* 移除 ul 預設的點點和內距 */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  /* 設定標籤之間的間距 */
+  gap: 12px;
+}
+
+.category-list a {
+  display: block;
+  padding: 8px 16px;
+  /* 使用一個較深的灰色作為背景 */
+  background-color: #282a2c;
+  border-radius: 20px; /* 圓角膠囊形狀 */
+  text-decoration: none;
+  /* 使用較淡的文字顏色 */
+  color: #bdc1c6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: 1px solid transparent; /* 預留邊框位置，避免 hover 時跳動 */
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* 滑鼠移上去時的效果 */
+.category-list a:hover {
+  background-color: #3c4043;
+  color: #fff;
+}
+
+/* 當前頁面的標籤，或「全部文章」按鈕的啟用樣式 */
+.category-list a.active {
+  /* 使用與檢視切換器一致的藍色 */
+  background-color: #347af2; 
+  color: #fff;
+  border-color: #8ab4f8;
+}
+
+
+/* --- 2. 卡片上的標籤 --- */
+
+.card-tags {
+  /* 與上方的日期隔開 */
+  margin-top: 12px; 
+  /* 同樣使用 flex 讓標籤可以換行 */
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* 卡片上的標籤間距可以小一點 */
+}
+
+.card-tag-link {
+  display: inline-block;
+  font-size: 0.75rem; /* 字體也小一點 */
+  text-decoration: none;
+  /* 使用較淡的文字，但比 meta 資訊清楚 */
+  color: #bdc1c6;
+  /* 使用半透明的背景，更能融入卡片 */
+  background: rgba(255, 255, 255, 0.05);
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+
+.card-tag-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+
+/* --- 3. 按鈕樣式 (用於標籤頁的「返回」連結) --- */
+.button-link {
+  display: inline-block;
+  margin: 0 8px;
+  padding: 10px 20px;
+  background-color: #347af2;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.button-link:hover {
+  background-color: #5c91f3;
+}
