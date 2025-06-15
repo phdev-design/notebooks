@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PHDEV Notebooks</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-00J0H60BY9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -23,16 +24,17 @@
   <h1>歡迎來到 PHDEV Notebooks</h1>
 </header>
 <main>
+  <!-- 標籤導覽列 -->
   <nav class="category-nav">
     <ul class="category-list">
       <li><a href="/" class="active">全部文章</a></li>
-      {# 遍歷我們在 .eleventy.js 中建立的 tagList 集合 #}
       {%- for tag in collections.tagList -%}
         <li><a href="/tags/{{ tag | slug }}/">{{ tag }}</a></li>
       {%- endfor -%}
     </ul>
   </nav>
 
+  <!-- 檢視模式切換器 -->
   <div class="controls-wrapper">
     <div class="view-switcher">
       <button id="grid-view-btn" class="view-btn active" aria-label="格狀檢視">
@@ -44,51 +46,35 @@
     </div>
   </div>
   
+  <!-- 內容容器 -->
   <div class="card-grid" id="post-container">
-    {# 迴圈遍歷所有文章 (維持不變) #}
-    {%- for post in posts | reverse -%}
+    {%- for post in posts -%}
       <article class="card">
         <a href="{{ post.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
+          <!-- 項目 1: 圖示 -->
           <div class="card-icon">{{ post.icon or '📄' }}</div>
+
+          <!-- 項目 2: 這個間隔元素會自動填滿空間 -->
+          <div class="card-spacer"></div>
+
+          <!-- 項目 3: 文字內容 -->
           <div class="card-content">
             <h2>{{ post.title }}</h2>
             <div class="card-meta">
               <span>{{ post.date | date('YYYY-MM-DD') }}</span>
+              {% if post.tags and post.tags.length > 0 %}
+                <div class="tag-popup-container">
+                  <!-- ✨ 修改點：移除了 trigger class，變為純文字 -->
+                  <span>{{ post.tags | length }} 個標籤</span>
+                  <!-- ✨ 修改點：移除了彈出視窗的 div -->
+                </div>
+              {% endif %}
             </div>
-            {% if post.tags and post.tags.length > 0 %}
-            <div class="card-tags">
-              {% for tag in post.tags %}
-                <a href="/tags/{{ tag | slug }}/" class="card-tag-link">{{ tag }}</a>
-              {% endfor %}
-            </div>
-            {% endif %}
           </div>
         </a>
       </article>
     {%- endfor -%}
   </div>
 </main>
-
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const gridViewBtn = document.getElementById('grid-view-btn');
-    const listViewBtn = document.getElementById('list-view-btn');
-    const postContainer = document.getElementById('post-container');
-
-    if (gridViewBtn && listViewBtn && postContainer) {
-      gridViewBtn.addEventListener('click', () => {
-        postContainer.classList.remove('list-view');
-        gridViewBtn.classList.add('active');
-        listViewBtn.classList.remove('active');
-      });
-
-      listViewBtn.addEventListener('click', () => {
-        postContainer.classList.add('list-view');
-        listViewBtn.classList.add('active');
-        gridViewBtn.classList.remove('active');
-      });
-    }
-  });
-</script>
 </body>
 </html>

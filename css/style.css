@@ -6,6 +6,9 @@ body {
 }
 
 header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   padding: 24px 40px;
 }
 
@@ -14,11 +17,16 @@ header h1 {
   font-weight: 500;
 }
 
+.logo {
+  height: 80px;
+  width: auto;
+}
+
 main {
   padding: 0 40px 40px 40px;
 }
 
-/* --- 檢視模式切換器 --- */
+/* --- Controls --- */
 .controls-wrapper {
   margin-bottom: 20px;
   display: flex;
@@ -42,7 +50,7 @@ main {
   align-items: center;
   justify-content: center;
   border-radius: 6px;
-  color: #9aa0a6; /* 非啟用狀態的圖示顏色 */
+  color: #9aa0a6;
 }
 
 .view-btn:hover {
@@ -50,8 +58,8 @@ main {
 }
 
 .view-btn.active {
-  background-color: #347af2; /* 藍色背景表示啟用 */
-  color: #fff; /* 啟用狀態的圖示顏色 */
+  background-color: #347af2;
+  color: #fff;
 }
 
 .view-btn svg {
@@ -59,7 +67,7 @@ main {
   height: 20px;
 }
 
-/* --- 卡片模式 (預設) --- */
+/* --- Card Grid --- */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -71,7 +79,7 @@ main {
   border-radius: 12px;
   border: 1px solid #5f6368;
   transition: background-color 0.2s ease, transform 0.2s ease;
-  aspect-ratio: 1 / 1; 
+  aspect-ratio: 1 / 1;
 }
 
 .card:hover {
@@ -79,209 +87,171 @@ main {
   transform: translateY(-4px);
 }
 
+/* ================================================== */
+/* ✨ 關鍵佈局修正 (CSS Grid 法) ✨                */
+/* ================================================== */
+
+/* ✨ 核心修正 1: 讓 a 標籤成為 Grid 容器 */
 .card-link-wrapper {
   text-decoration: none;
   color: inherit;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  /* ✨ 核心修正 2: 定義三行佈局
+     - 第一行 (圖示) 高度自動
+     - 第二行 (間隔) 會佔滿所有剩餘的垂直空間 (1fr)
+     - 第三行 (內容) 高度自動
+  */
+  grid-template-rows: auto 1fr auto;
   height: 100%;
   padding: 20px;
-  box-sizing: border-box; 
+  box-sizing: border-box;
 }
 
 .card-icon {
   font-size: 4rem;
+  line-height: 1;
 }
+
+/* 間隔元素不需要任何樣式，它會自動被放到 Grid 的第二行 */
+.card-spacer { }
 
 .card-content h2 {
   font-size: 1.25rem;
   font-weight: 500;
   margin: 0 0 8px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card-meta {
   font-size: 0.8rem;
   color: #bdc1c6;
-}
-
-.add-new-card {
-  background-color: transparent;
-  border-style: dashed;
-}
-
-.add-new-card a {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
-  height: 100%;
-  text-decoration: none;
-  color: #8ab4f8;
-  font-size: 1rem;
-  gap: 12px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 
-.add-new-card .plus-icon {
-  font-size: 2.5rem;
-  font-weight: 200;
+/* 在日期後面加上間距 */
+.card-meta > * + * {
+  margin-left: 0.5ch;
 }
 
-/* --- 列表模式 --- */
+.tag-popup-container {
+  position: relative; /* 為了讓彈出視窗可以基於此定位 */
+  display: flex;
+  align-items: center;
+}
+
+/* 用偽元素加上分隔點 */
+.tag-popup-container::before {
+  content: '・';
+  color: #bdc1c6;
+  margin-right: 0.5ch;
+}
+
+
+/* --- List View Overrides --- */
 .card-grid.list-view {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-
-.card-grid.list-view .card {
-  width: 100%;
-  aspect-ratio: auto;
-  height: auto;
-}
-
+.card-grid.list-view .card { width: 100%; aspect-ratio: auto; height: auto; }
 .card-grid.list-view .card-link-wrapper {
+  display: flex; /* 在列表模式中切換回 Flexbox */
+  grid-template-rows: none; /* 清除 Grid 規則 */
   flex-direction: row;
-  justify-content: flex-start;
   align-items: center;
   padding: 12px 16px;
   gap: 16px;
 }
 
-.card-grid.list-view .card-icon {
-  font-size: 1.5rem;
-  flex-shrink: 0;
-}
-
-.card-grid.list-view .card-content {
-  flex-grow: 1;
-}
-
-.card-grid.list-view .card-content h2 {
-   font-size: 1rem;
-   margin-bottom: 4px;
-}
-
-.card-grid.list-view .add-new-card {
+/* 在列表模式中，隱藏間隔元素 */
+.card-grid.list-view .card-spacer {
   display: none;
 }
 
-/* Header 的排版設定 */
-header {
-  display: flex;
-  align-items: center;
-  gap: 1rem; 
+.card-grid.list-view .card-icon { font-size: 1.5rem; }
+.card-grid.list-view .card-content { flex-grow: 1; }
+.card-grid.list-view .card-content h2 {
+    font-size: 1rem;
+    margin: 0 0 4px 0;
+    display: block;
+    -webkit-line-clamp: unset;
 }
+.card-grid.list-view .card-meta { gap: 0.5ch; }
+.card-grid.list-view .card-meta > * + * { margin-left: 0; }
+.card-grid.list-view .tag-popup-container::before { content: none; }
 
-/* 關鍵！設定 Logo 的大小 */
-.logo {
-  height: 80px; /* <<-- 您可以調整這個數值！ */
-  width: auto;   /* 讓寬度自動等比例縮放，防止變形 */
-}
 
-/* ================================================== */
-/* 以下是為標籤功能新增的樣式                 */
-/* ================================================== */
-
-/* --- 1. 標籤導覽列 (在文章列表上方) --- */
-
+/* --- Tags Navigation --- */
 .category-nav {
-  /* 與下方的內容隔開一些距離 */
   margin-bottom: 32px;
   padding: 16px;
-  /* 使用與檢視切換器類似的背景和邊框，保持風格一致 */
   background-color: #1e1f20;
   border: 1px solid #5f6368;
   border-radius: 12px;
 }
+.category-list { display: flex; flex-wrap: wrap; justify-content: center; list-style: none; padding: 0; margin: 0; gap: 12px; }
+.category-list a { display: block; padding: 8px 16px; background-color: #282a2c; border-radius: 20px; text-decoration: none; color: #bdc1c6; font-size: 0.9rem; font-weight: 500; border: 1px solid transparent; transition: all 0.2s; }
+.category-list a:hover { background-color: #3c4043; color: #fff; }
+.category-list a.active { background-color: #347af2; color: #fff; border-color: #8ab4f8; }
 
-.category-list {
-  /* 讓標籤可以並排，並在空間不夠時自動換行 */
-  display: flex;
-  flex-wrap: wrap;
-  /* 水平置中顯示 */
-  justify-content: center; 
-  /* 移除 ul 預設的點點和內距 */
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  /* 設定標籤之間的間距 */
-  gap: 12px;
+/* --- General Button (for tags page) --- */
+.button-link { display: inline-block; margin: 0 8px; padding: 10px 20px; background-color: #347af2; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 500; transition: background-color 0.2s; }
+.button-link:hover { background-color: #5c91f3; }
+
+/* --- Tag Popup --- */
+.tag-count-trigger {
+  cursor: pointer;
+  color: #8ab4f8;
+  text-decoration: underline;
+  text-decoration-style: dotted;
 }
 
-.category-list a {
-  display: block;
-  padding: 8px 16px;
-  /* 使用一個較深的灰色作為背景 */
+.tag-count-trigger:hover {
+  color: #a1c6f8;
+}
+
+.tag-popup {
+  visibility: hidden;
+  opacity: 0;
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: #282a2c;
-  border-radius: 20px; /* 圓角膠囊形狀 */
-  text-decoration: none;
-  /* 使用較淡的文字顏色 */
-  color: #bdc1c6;
-  font-size: 0.9rem;
-  font-weight: 500;
-  border: 1px solid transparent; /* 預留邊框位置，避免 hover 時跳動 */
-  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  border: 1px solid #5f6368;
+  border-radius: 8px;
+  padding: 8px;
+  z-index: 100;
+  width: max-content;
+  max-width: 200px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  transition: all 0.2s ease;
 }
 
-/* 滑鼠移上去時的效果 */
-.category-list a:hover {
+.tag-popup.visible {
+  visibility: visible;
+  opacity: 1;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.tag-popup-link {
+  color: #e8eaed;
+  text-decoration: none;
+  display: block;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.tag-popup-link:hover {
   background-color: #3c4043;
   color: #fff;
-}
-
-/* 當前頁面的標籤，或「全部文章」按鈕的啟用樣式 */
-.category-list a.active {
-  /* 使用與檢視切換器一致的藍色 */
-  background-color: #347af2; 
-  color: #fff;
-  border-color: #8ab4f8;
-}
-
-
-/* --- 2. 卡片上的標籤 --- */
-
-.card-tags {
-  /* 與上方的日期隔開 */
-  margin-top: 12px; 
-  /* 同樣使用 flex 讓標籤可以換行 */
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px; /* 卡片上的標籤間距可以小一點 */
-}
-
-.card-tag-link {
-  display: inline-block;
-  font-size: 0.75rem; /* 字體也小一點 */
-  text-decoration: none;
-  /* 使用較淡的文字，但比 meta 資訊清楚 */
-  color: #bdc1c6;
-  /* 使用半透明的背景，更能融入卡片 */
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 8px;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-}
-
-.card-tag-link:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-
-/* --- 3. 按鈕樣式 (用於標籤頁的「返回」連結) --- */
-.button-link {
-  display: inline-block;
-  margin: 0 8px;
-  padding: 10px 20px;
-  background-color: #347af2;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-.button-link:hover {
-  background-color: #5c91f3;
 }

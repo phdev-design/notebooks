@@ -1,0 +1,36 @@
+
+---
+# 使用我們在 .eleventy.js 中建立的 tagList 集合來進行分頁
+pagination:
+  data: collections.tagList
+  size: 1
+  alias: tag # 在這個範本中，每一個標籤的名稱會被稱為 'tag'
+# 為每個標籤頁面設定永久連結 (URL)，例如：/tags/醫學/
+permalink: "/tags//index.html"
+---
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>標籤： | PHDEV Notebooks</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header>
+  <a href="/" class="logo-link">
+    <img src="/img/logo.png" alt="PHDEV Notebooks Logo" class="logo">
+  </a>
+  <h1>標籤：</h1>
+</header>
+<main>
+  <div class="card-grid">
+    </div>
+  <div style="text-align: center; margin-top: 2rem;">
+    <a href="/tags" class="button-link">查看所有標籤</a>
+    <a href="/" class="button-link">返回首頁</a>
+  </div>
+</main>
+</body>
+</html>

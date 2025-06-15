@@ -1,48 +1,64 @@
 // .eleventy.js
 
-// 1. 在檔案最上方，加入這一行來引入套件
-//    (請記得先在終端機執行 npm install transliteration)
 const { slugify } = require("transliteration");
 const dateFilter = require('nunjucks-date-filter');
+const glob = require('glob');
+// ✨ 引入 Node.js 內建的檔案系統模組
+const fs = require('fs');
+const path = require('path');
 
 module.exports = function(eleventyConfig) {
-  // --- 您的既有設定 (維持不變) ---
+  // --- 靜態檔案複製 ---
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("favicon.ico");
   eleventyConfig.addPassthroughCopy("img");
+
+  // --- 過濾器 ---
   eleventyConfig.addFilter('date', dateFilter);
-  eleventyConfig.addWatchTarget("./css/");
-  eleventyConfig.addWatchTarget("./img/");
-
-  // --- 2. 在這裡加入我們需要的新功能 ---
-
-  // 功能一：新增 slug 過濾器
-  // 作用：將「中文標籤」或任何字串，轉換成 URL 友善的格式
-  // 範例： "前端開發" -> "qian-duan-kai-fa"
   eleventyConfig.addFilter("slug", (str) => {
-    if (!str) return;
+    if (!str) return "";
     return slugify(str, { lower: true, separator: '-' });
   });
 
-  // 功能二：新增「標籤列表(tagList)」的 Collection
-  // 作用：自動掃描您所有 posts/*.json 檔案中的 "tags" 陣列，
-  //       並建立一個不重複、已排序的所有標籤清單。
-  //       我們可以在範本中用 `collections.tagList` 來存取這個清單。
+  // --- 集合 (Collection) ---
   eleventyConfig.addCollection("tagList", function(collectionApi) {
-    const postsCollection = collectionApi.getFilteredByTag("posts");
+    // =======================================================
+    // ✨ 最終解決方案：手動讀取檔案來建立標籤列表 ✨
+    // 1. 使用我們確認可行的 glob 來掃描所有 .json 檔案
+    const files = glob.sync("./posts/*.json");
     let tagSet = new Set();
-    
-    postsCollection.forEach(item => {
-      if (Array.isArray(item.data.tags)) {
-        item.data.tags.forEach(tag => tagSet.add(tag));
+
+    files.forEach(file => {
+      // 2. 排除掉設定檔本身
+      if (file.endsWith('posts.11tydata.json')) {
+        return;
+      }
+      
+      try {
+        // 3. 讀取每個檔案的內容
+        const content = fs.readFileSync(file, 'utf8');
+        // 4. 將內容解析為 JSON 物件
+        const data = JSON.parse(content);
+
+        // 5. 從解析後的資料中提取 tags 陣列
+        if (Array.isArray(data.tags)) {
+          data.tags.forEach(tag => tagSet.add(tag));
+        }
+      } catch (e) {
+        console.error(`處理檔案 ${file} 時發生錯誤:`, e);
       }
     });
+    // =======================================================
 
+    // 將 Set 轉換為陣列並排序
     return [...tagSet].sort();
   });
 
+  // --- 監控變更 ---
+  eleventyConfig.addWatchTarget("./css/");
+  eleventyConfig.addWatchTarget("./img/");
 
-  // --- 3. 返回 Eleventy 的設定物件 (維持不變) ---
+  // --- 設定物件 ---
   return {
     dir: {
       input: ".",
@@ -50,10 +66,6 @@ module.exports = function(eleventyConfig) {
       data: "_data",
       output: "_site"
     },
-    templateFormats: [
-      "md",
-      "njk",
-      "html",
-    ],
+    templateFormats: ["md", "njk", "html"],
   };
 };

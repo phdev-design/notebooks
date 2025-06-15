@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>偵錯頁面</title>
+  <style>
+    body { font-family: monospace; background: #222; color: #eee; padding: 2rem; }
+    h1 { color: #f90; }
+    ul { border: 1px solid #555; padding: 1rem; }
+    li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <h1>偵錯: 檢查 collections.tagList</h1>
+  <p>這個集合裡面有 {{ collections.tagList | length }} 個項目。</p>
+  
+  {% if collections.tagList and collections.tagList.length > 0 %}
+    <h2>項目列表：</h2>
+    <ul>
+      {% for tag in collections.tagList %}
+        <li>{{ tag }}</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p style="color: #f44;"><strong>錯誤：`collections.tagList` 是空的！</strong></p>
+    <p>這代表問題出在 `.eleventy.js` 的設定，或是 `posts/*.json` 檔案中沒有正確的 `tags` 陣列。</p>
+  {% endif %}
+</body>
+</html>
