@@ -51,7 +51,8 @@ module.exports = function(eleventyConfig) {
     // =======================================================
 
     // 將 Set 轉換為陣列並排序
-    return [...tagSet].sort();
+    return [...tagSet].sort().slice(0, 10);
+
   });
 
   // --- 監控變更 ---
