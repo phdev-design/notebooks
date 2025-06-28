@@ -1,0 +1,27 @@
+// _data/postsByTag.js
+
+module.exports = function(data) {
+  // 【關鍵修正】改為直接使用由其他 _data 檔案提供的 `posts` 全域變數
+  const allPosts = data.posts;
+
+  // 如果找不到文章，或文章陣列是空的，就回傳一個空物件
+  if (!allPosts || allPosts.length === 0) {
+    console.warn("警告： _data/postsByTag.js 檔案沒有在 'posts' 全域變數中找到任何文章。將不會產生任何標籤頁面。");
+    return {};
+  }
+
+  const postsByTag = {};
+
+  allPosts.forEach(post => {
+    // 您的 posts 變數中的 tags 應該是 post.tags (根據 index.njk 的寫法)
+    (post.tags || []).forEach(tagName => {
+      if (!postsByTag[tagName]) {
+        postsByTag[tagName] = [];
+      }
+      // 直接 push 整個 post 物件
+      postsByTag[tagName].push(post);
+    });
+  });
+
+  return postsByTag;
+};

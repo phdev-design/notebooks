@@ -547,3 +547,39 @@ main {
     max-width: none;
   }
 }
+
+/* 預設隱藏需要稍後載入的文章 */
+.post-hidden {
+  display: none;
+}
+
+/* 「載入更多」按鈕的容器樣式 */
+.load-more-container {
+  text-align: center; /* 讓按鈕置中 */
+  padding: 2rem 0;    /* 上下留白 */
+}
+
+/* 「載入更多」按鈕的樣式 */
+#load-more-btn {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #555;
+  padding: 10px 25px;
+  font-size: 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+#load-more-btn:hover {
+  background-color: #444;
+}
+
+#load-more-btn:active {
+  transform: scale(0.98);
+}
+
+/* 如果按鈕被隱藏了 (當所有文章都載入後) */
+#load-more-btn.hidden {
+    display: none;
+}

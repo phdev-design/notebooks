@@ -1,5 +1,5 @@
 ---
-permalink: /feed.xml
+permalink: feed.xml
 eleventyExcludeFromCollections: true
 ---
 <?xml version="1.0" encoding="utf-8"?>
@@ -9,22 +9,22 @@ eleventyExcludeFromCollections: true
     <link>https://notebooks.phdev.uk</link>
     <description>分享程式開發筆記與專案連結</description>
     <language>zh-TW</language>
-    <lastBuildDate>{{ collections.recentPosts[0].data.date | isoDate }}</lastBuildDate>
+    {# 【修正】增加一個判斷，只有在 collections.posts 有內容時，才輸出 lastBuildDate #}
+    {%- if collections.posts.length -%}
+    <lastBuildDate>{{ collections.posts[0].data.date | isoDate }}</lastBuildDate>
+    {%- endif -%}
     <atom:link href="https://notebooks.phdev.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    
-    {%- for post in collections.recentPosts -%}
+    {%- for post in collections.posts %}
     <item>
-      <title>{{ post.data.title | escape }}</title>
+      <title>{{ post.data.title }}</title>
       <link>{{ post.data.url }}</link>
-      <description>{{ (post.data.description or post.data.title) | stripHtml | truncate | escape }}</description>
+      {# 【修正】同樣增加判斷，確保日期存在才進行格式化 #}
+      {%- if post.data.date -%}
       <pubDate>{{ post.data.date | isoDate }}</pubDate>
-      <guid isPermaLink="false">{{ post.data.url }}-{{ post.data.date | date('YYYY-MM-DD') }}</guid>
-      {%- if post.data.tags -%}
-        {%- for tag in post.data.tags -%}
-        <category>{{ tag }}</category>
-        {%- endfor -%}
       {%- endif -%}
+      <guid>{{ post.data.url }}</guid>
+      <description><![CDATA[{{ post.data.description | stripHtml }}]]></description>
     </item>
-    {%- endfor -%}
+    {%- endfor %}
   </channel>
 </rss>

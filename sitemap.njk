@@ -1,32 +1,28 @@
 ---
-permalink: /sitemap.xml
+permalink: sitemap.xml
 eleventyExcludeFromCollections: true
 ---
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- 首頁 -->
-  <url>
-    <loc>https://your-domain.com/</loc>
-    <lastmod>{{ collections.recentPosts[0].data.date | isoDate }}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- 標籤頁面 -->
-  {%- for tag in collections.tagList -%}
-  <url>
-    <loc>https://your-domain.com/tags/{{ tag | slug }}/</loc>
-    <lastmod>{{ collections.recentPosts[0].data.date | isoDate }}</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  {%- endfor -%}
-  
-  <!-- RSS 訂閱 -->
-  <url>
-    <loc>https://your-domain.com/feed.xml</loc>
-    <lastmod>{{ collections.recentPosts[0].data.date | isoDate }}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
+    {# 新增首頁 #}
+    <url>
+        <loc>https://notebooks.phdev.uk/</loc>
+        <changefreq>daily</changefreq>
+        {# 只有在文章集合有內容時，才設定最後修改日期 #}
+        {%- if collections.posts.length -%}
+        <lastmod>{{ collections.posts[0].data.date | isoDate }}</lastmod>
+        {%- endif -%}
+    </url>
+
+    {# 新增所有文章的外部連結 #}
+    {%- for post in collections.posts -%}
+    {# 確保 URL 和 Date 都存在才加入 #}
+    {%- if post.data.url and post.data.date -%}
+    <url>
+        <loc>{{ post.data.url }}</loc>
+        <changefreq>weekly</changefreq>
+        <lastmod>{{ post.data.date | isoDate }}</lastmod>
+    </url>
+    {%- endif -%}
+    {%- endfor -%}
 </urlset>

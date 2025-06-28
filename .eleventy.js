@@ -1,64 +1,63 @@
 const { DateTime } = require("luxon");
+const { transliterate } = require('transliteration');
 
 module.exports = function(eleventyConfig) {
-  // 複製靜態資源
+  // 1. 複製靜態資源
   eleventyConfig.addPassthroughCopy("css");
   eleventyConfig.addPassthroughCopy("img");
   eleventyConfig.addPassthroughCopy("admin");
   eleventyConfig.addPassthroughCopy("js");
   eleventyConfig.addPassthroughCopy("favicon.ico");
 
-  // 日期格式化
-  eleventyConfig.addFilter("date", (dateObj, format) => {
-    return DateTime.fromJSDate(dateObj).toFormat(format);
+  // 2. 新增所有需要的 Filter
+  eleventyConfig.addFilter("date", (dateObj, format = "yyyy-MM-dd") => {
+    const dt = DateTime.fromISO(dateObj, { zone: 'utc' });
+    return dt.isValid ? dt.toFormat(format) : "無效日期";
   });
 
-  // ISO 日期格式（用於 RSS）
+  eleventyConfig.addFilter("slug", (str) => {
+    if (!str) return "";
+    return transliterate(str).toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]+/g, '');
+  });
+
   eleventyConfig.addFilter("isoDate", (dateObj) => {
-    return DateTime.fromJSDate(dateObj).toISO();
+    const dt = DateTime.fromISO(dateObj, { zone: 'utc' });
+    return dt.isValid ? dt.toISO() : "";
+  });
+  
+  eleventyConfig.addFilter("stripHtml", content => content ? String(content).replace(/<[^>]*>/g, '') : '');
+
+  eleventyConfig.addFilter("randomLimit", (arr, limit) => {
+    const shuffled = [...arr];
+    let currentIndex = shuffled.length;
+    let randomIndex;
+    while (currentIndex !== 0) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex--;
+      [shuffled[currentIndex], shuffled[randomIndex]] = [
+        shuffled[randomIndex], shuffled[currentIndex]];
+    }
+    return shuffled.slice(0, limit);
+  });
+  
+  // 我們保留這個有用的篩選器
+  eleventyConfig.addFilter("filterByTag", (posts, tag) => {
+    if (!posts || !tag) {
+      return [];
+    }
+    return posts.filter(post => post.tags && post.tags.includes(tag));
   });
 
-  // 建立標籤集合
-  eleventyConfig.addCollection("tagList", function(collection) {
-    const tagSet = new Set();
-    collection.getAll().forEach(item => {
-      if (item.data.tags && Array.isArray(item.data.tags)) {
-        item.data.tags.forEach(tag => tagSet.add(tag));
-      }
-    });
-    return [...tagSet].sort();
-  });
-
-  // 建立文章集合（按日期排序）
-  eleventyConfig.addCollection("posts", function(collection) {
-    return collection.getFilteredByGlob("posts/*.json")
-      .sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
-  });
-
-  // 建立最新文章集合（用於 RSS）
-  eleventyConfig.addCollection("recentPosts", function(collection) {
-    return collection.getFilteredByGlob("posts/*.json")
-      .sort((a, b) => new Date(b.data.date) - new Date(a.data.date))
-      .slice(0, 20); // 只取最新 20 篇
-  });
-
-  // 清理 HTML 標籤（用於 RSS 描述）
-  eleventyConfig.addFilter("stripHtml", function(content) {
-    return content.replace(/<[^>]*>/g, '');
-  });
-
-  // 截取文字（用於摘要）
-  eleventyConfig.addFilter("truncate", function(text, length = 150) {
-    if (text.length <= length) return text;
-    return text.substring(0, length) + '...';
-  });
-
+  // 3. 專案目錄設定
   return {
     dir: {
       input: ".",
       includes: "_includes",
       data: "_data",
       output: "_site"
-    }
+    },
+    templateFormats: ["md", "njk", "html", "json"],
+    markdownTemplateEngine: "njk",
+    htmlTemplateEngine: "njk",
   };
 };

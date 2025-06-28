@@ -1,18 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- 首頁 -->
-  <url>
-    <loc>https://your-domain.com/</loc>
-    <lastmod></lastmod>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
-  
-  <!-- 標籤頁面 --><!-- RSS 訂閱 -->
-  <url>
-    <loc>https://your-domain.com/feed.xml</loc>
-    <lastmod></lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-</urlset>
+    
+    <url>
+        <loc>https://notebooks.phdev.uk/</loc>
+        <changefreq>daily</changefreq>
+        </url>
+
+    </urlset>

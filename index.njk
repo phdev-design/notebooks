@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PHDEV Notebooks</title>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="/css/style.css">
   <link rel="alternate" type="application/rss+xml" title="PHDEV Notebooks RSS" href="/feed.xml">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-00J0H60BY9"></script>
@@ -23,7 +23,6 @@
   </a>
   <h1>👋歡迎來到 PHDEV Notebooks</h1>
   
-  <!-- 訂閱按鈕 -->
   <div class="header-actions">
     <button id="subscribe-btn" class="subscribe-button">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -37,49 +36,33 @@
 </header>
 
 <main>
-  <!-- 標籤導覽列 -->
   <nav class="category-nav">
     <ul class="category-list">
       <li><a href="/" class="active">全部文章</a></li>
-      {%- for tag in collections.tagList -%}
+      {%- for tag in tagList | randomLimit(20) -%}
         <li><a href="/tags/{{ tag | slug }}/">{{ tag }}</a></li>
       {%- endfor -%}
     </ul>
   </nav>
 
-  <!-- 檢視模式切換器 -->
   <div class="controls-wrapper">
-    <div class="view-switcher">
-      <button id="grid-view-btn" class="view-btn active" aria-label="格狀檢視">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-      </button>
-      <button id="list-view-btn" class="view-btn" aria-label="列表檢視">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-      </button>
     </div>
-  </div>
   
-  <!-- 內容容器 -->
   <div class="card-grid" id="post-container">
+    {# Nunjucks 的 for 迴圈提供 loop.index0 (從0開始的索引) #}
     {%- for post in posts -%}
-      <article class="card">
+      {# 【關鍵修改】如果索引值 >= 21，就加上 post-hidden 這個 class #}
+      <article class="card {% if loop.index0 >= 21 %}post-hidden{% endif %}">
         <a href="{{ post.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
-          <!-- 項目 1: 圖示 -->
           <div class="card-icon">{{ post.icon or '📄' }}</div>
-
-          <!-- 項目 2: 這個間隔元素會自動填滿空間 -->
           <div class="card-spacer"></div>
-
-          <!-- 項目 3: 文字內容 -->
           <div class="card-content">
             <h2>{{ post.title }}</h2>
             <div class="card-meta">
               <span>{{ post.date | date('yyyy-MM-dd') }}</span>
               {% if post.tags and post.tags.length > 0 %}
                 <div class="tag-popup-container">
-                  <!-- ✨ 修改點：移除了 trigger class，變為純文字 -->
                   <span>{{ post.tags | length }} 個標籤</span>
-                  <!-- ✨ 修改點：移除了彈出視窗的 div -->
                 </div>
               {% endif %}
             </div>
@@ -88,80 +71,52 @@
       </article>
     {%- endfor -%}
   </div>
+
+  {# 【新增】載入更多按鈕的容器 #}
+  {# 只在文章總數 > 20 的時候才顯示這個按鈕 #}
+  {%- if posts.length > 20 -%}
+  <div class="load-more-container">
+    <button id="load-more-btn">載入更多</button>
+  </div>
+  {%- endif -%}
 </main>
 
-<!-- 訂閱彈窗 -->
+<!-- 訂閱彈窗 (無需變更) -->
 <div id="subscribe-modal" class="modal">
   <div class="modal-content">
     <div class="modal-header">
       <h2>訂閱 PHDEV Notebooks</h2>
       <button id="close-modal" class="close-btn">&times;</button>
     </div>
-    
     <div class="modal-body">
       <div class="subscription-options">
-        
-        <!-- RSS 訂閱 -->
-        <div class="subscription-option">
-          <div class="option-icon">📡</div>
-          <div class="option-content">
-            <h3>RSS 訂閱</h3>
-            <p>使用您喜愛的 RSS 閱讀器訂閱我們的內容</p>
-            <button id="rss-btn" class="option-button">複製 RSS 網址</button>
-          </div>
-        </div>
-
-        <!-- 電子郵件訂閱 -->
-        <div class="subscription-option">
-          <div class="option-icon">📧</div>
-          <div class="option-content">
-            <h3>電子郵件通知</h3>
-            <p>在有新內容時收到電子郵件通知</p>
-            <form id="email-subscribe-form" class="email-form">
-              <input type="email" id="email-input" placeholder="輸入您的電子郵件" required>
-              <button type="submit" class="option-button">訂閱</button>
-            </form>
-          </div>
-        </div>
-
-        <!-- 瀏覽器通知 -->
-        <div class="subscription-option">
-          <div class="option-icon">🔔</div>
-          <div class="option-content">
-            <h3>瀏覽器通知</h3>
-            <p>直接在瀏覽器中收到新內容通知</p>
-            <button id="notify-btn" class="option-button">啟用通知</button>
-          </div>
-        </div>
-
+        <div class="subscription-option"><div class="option-icon">📡</div><div class="option-content"><h3>RSS 訂閱</h3><p>使用您喜愛的 RSS 閱讀器訂閱我們的內容</p><button id="rss-btn" class="option-button">複製 RSS 網址</button></div></div>
+        <div class="subscription-option"><div class="option-icon">📧</div><div class="option-content"><h3>電子郵件通知</h3><p>在有新內容時收到電子郵件通知</p><form id="email-subscribe-form" class="email-form"><input type="email" id="email-input" placeholder="輸入您的電子郵件" required><button type="submit" class="option-button">訂閱</button></form></div></div>
+        <div class="subscription-option"><div class="option-icon">🔔</div><div class="option-content"><h3>瀏覽器通知</h3><p>直接在瀏覽器中收到新內容通知</p><button id="notify-btn" class="option-button">啟用通知</button></div></div>
       </div>
     </div>
   </div>
 </div>
 
-<script src="js/subscription.js"></script>
+<script src="/js/subscription.js"></script>
 <script>
-// 檢視模式切換功能
+// 檢視模式切換功能 (無需變更)
 document.addEventListener('DOMContentLoaded', function() {
   const gridViewBtn = document.getElementById('grid-view-btn');
   const listViewBtn = document.getElementById('list-view-btn');
   const postContainer = document.getElementById('post-container');
-  
-  // 載入儲存的檢視模式
   const savedView = localStorage.getItem('viewMode') || 'grid';
   if (savedView === 'list') {
     postContainer.classList.add('list-view');
     gridViewBtn.classList.remove('active');
     listViewBtn.classList.add('active');
   }
-  
   gridViewBtn.addEventListener('click', function() {
     postContainer.classList.remove('list-view');
     gridViewBtn.classList.add('active');
     listViewBtn.classList.remove('active');
     localStorage.setItem('viewMode', 'grid');
   });
-  
   listViewBtn.addEventListener('click', function() {
     postContainer.classList.add('list-view');
     gridViewBtn.classList.remove('active');
@@ -170,5 +125,46 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 </script>
+
+<script src="/js/subscription.js"></script>
+<script>
+// 檢視模式切換功能 (無需變更)
+document.addEventListener('DOMContentLoaded', function() {
+  // ... 您原有的檢視切換程式碼 ...
+});
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  
+  // 如果頁面上找不到這個按鈕，就直接結束，避免錯誤
+  if (!loadMoreBtn) {
+    return;
+  }
+  
+  // 設定每次點擊要載入幾篇文章
+  const postsToLoad = 21;
+
+  loadMoreBtn.addEventListener('click', function() {
+    // 找出所有還被隱藏的文章
+    const hiddenPosts = document.querySelectorAll('.post-hidden');
+    
+    // 從中選取接下來要顯示的文章 (最多 postsToLoad 篇)
+    const postsToShow = Array.from(hiddenPosts).slice(0, postsToLoad);
+    
+    postsToShow.forEach(post => {
+      post.classList.remove('post-hidden');
+    });
+    
+    // 如果點擊後，再也找不到被隱藏的文章，就代表全部載入完畢
+    // 這時就可以把「載入更多」按鈕也隱藏起來
+    if (document.querySelectorAll('.post-hidden').length === 0) {
+      loadMoreBtn.classList.add('hidden'); // 使用 class 來隱藏，而不是直接改 style
+    }
+  });
+});
+</script>
+
 </body>
 </html>
