@@ -1,72 +1,64 @@
-// .eleventy.js
-
-const { slugify } = require("transliteration");
-const dateFilter = require('nunjucks-date-filter');
-const glob = require('glob');
-// ✨ 引入 Node.js 內建的檔案系統模組
-const fs = require('fs');
-const path = require('path');
+const { DateTime } = require("luxon");
 
 module.exports = function(eleventyConfig) {
-  // --- 靜態檔案複製 ---
+  // 複製靜態資源
   eleventyConfig.addPassthroughCopy("css");
-  eleventyConfig.addPassthroughCopy("favicon.ico");
   eleventyConfig.addPassthroughCopy("img");
+  eleventyConfig.addPassthroughCopy("admin");
+  eleventyConfig.addPassthroughCopy("js");
+  eleventyConfig.addPassthroughCopy("favicon.ico");
 
-  // --- 過濾器 ---
-  eleventyConfig.addFilter('date', dateFilter);
-  eleventyConfig.addFilter("slug", (str) => {
-    if (!str) return "";
-    return slugify(str, { lower: true, separator: '-' });
+  // 日期格式化
+  eleventyConfig.addFilter("date", (dateObj, format) => {
+    return DateTime.fromJSDate(dateObj).toFormat(format);
   });
 
-  // --- 集合 (Collection) ---
-  eleventyConfig.addCollection("tagList", function(collectionApi) {
-    // =======================================================
-    // ✨ 最終解決方案：手動讀取檔案來建立標籤列表 ✨
-    // 1. 使用我們確認可行的 glob 來掃描所有 .json 檔案
-    const files = glob.sync("./posts/*.json");
-    let tagSet = new Set();
+  // ISO 日期格式（用於 RSS）
+  eleventyConfig.addFilter("isoDate", (dateObj) => {
+    return DateTime.fromJSDate(dateObj).toISO();
+  });
 
-    files.forEach(file => {
-      // 2. 排除掉設定檔本身
-      if (file.endsWith('posts.11tydata.json')) {
-        return;
-      }
-      
-      try {
-        // 3. 讀取每個檔案的內容
-        const content = fs.readFileSync(file, 'utf8');
-        // 4. 將內容解析為 JSON 物件
-        const data = JSON.parse(content);
-
-        // 5. 從解析後的資料中提取 tags 陣列
-        if (Array.isArray(data.tags)) {
-          data.tags.forEach(tag => tagSet.add(tag));
-        }
-      } catch (e) {
-        console.error(`處理檔案 ${file} 時發生錯誤:`, e);
+  // 建立標籤集合
+  eleventyConfig.addCollection("tagList", function(collection) {
+    const tagSet = new Set();
+    collection.getAll().forEach(item => {
+      if (item.data.tags && Array.isArray(item.data.tags)) {
+        item.data.tags.forEach(tag => tagSet.add(tag));
       }
     });
-    // =======================================================
-
-    // 將 Set 轉換為陣列並排序
-    return [...tagSet].sort().slice(0, 10);
-
+    return [...tagSet].sort();
   });
 
-  // --- 監控變更 ---
-  eleventyConfig.addWatchTarget("./css/");
-  eleventyConfig.addWatchTarget("./img/");
+  // 建立文章集合（按日期排序）
+  eleventyConfig.addCollection("posts", function(collection) {
+    return collection.getFilteredByGlob("posts/*.json")
+      .sort((a, b) => new Date(b.data.date) - new Date(a.data.date));
+  });
 
-  // --- 設定物件 ---
+  // 建立最新文章集合（用於 RSS）
+  eleventyConfig.addCollection("recentPosts", function(collection) {
+    return collection.getFilteredByGlob("posts/*.json")
+      .sort((a, b) => new Date(b.data.date) - new Date(a.data.date))
+      .slice(0, 20); // 只取最新 20 篇
+  });
+
+  // 清理 HTML 標籤（用於 RSS 描述）
+  eleventyConfig.addFilter("stripHtml", function(content) {
+    return content.replace(/<[^>]*>/g, '');
+  });
+
+  // 截取文字（用於摘要）
+  eleventyConfig.addFilter("truncate", function(text, length = 150) {
+    if (text.length <= length) return text;
+    return text.substring(0, length) + '...';
+  });
+
   return {
     dir: {
       input: ".",
       includes: "_includes",
       data: "_data",
       output: "_site"
-    },
-    templateFormats: ["md", "njk", "html"],
+    }
   };
 };

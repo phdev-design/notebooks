@@ -6,13 +6,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PHDEV Notebooks</title>
   <link rel="stylesheet" href="css/style.css">
+  <link rel="alternate" type="application/rss+xml" title="PHDEV Notebooks RSS" href="/feed.xml">
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-00J0H60BY9"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-00J0H60BY9');
   </script>
 </head>
@@ -22,7 +22,20 @@
     <img src="/img/logo.png" alt="PHDEV Notebooks Logo" class="logo">
   </a>
   <h1>👋歡迎來到 PHDEV Notebooks</h1>
+  
+  <!-- 訂閱按鈕 -->
+  <div class="header-actions">
+    <button id="subscribe-btn" class="subscribe-button">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 11a9 9 0 0 1 9-9"></path>
+        <path d="M4 4a16 16 0 0 1 16 16"></path>
+        <circle cx="5" cy="19" r="1"></circle>
+      </svg>
+      訂閱更新
+    </button>
+  </div>
 </header>
+
 <main>
   <!-- 標籤導覽列 -->
   <nav class="category-nav">
@@ -76,5 +89,86 @@
     {%- endfor -%}
   </div>
 </main>
+
+<!-- 訂閱彈窗 -->
+<div id="subscribe-modal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>訂閱 PHDEV Notebooks</h2>
+      <button id="close-modal" class="close-btn">&times;</button>
+    </div>
+    
+    <div class="modal-body">
+      <div class="subscription-options">
+        
+        <!-- RSS 訂閱 -->
+        <div class="subscription-option">
+          <div class="option-icon">📡</div>
+          <div class="option-content">
+            <h3>RSS 訂閱</h3>
+            <p>使用您喜愛的 RSS 閱讀器訂閱我們的內容</p>
+            <button id="rss-btn" class="option-button">複製 RSS 網址</button>
+          </div>
+        </div>
+
+        <!-- 電子郵件訂閱 -->
+        <div class="subscription-option">
+          <div class="option-icon">📧</div>
+          <div class="option-content">
+            <h3>電子郵件通知</h3>
+            <p>在有新內容時收到電子郵件通知</p>
+            <form id="email-subscribe-form" class="email-form">
+              <input type="email" id="email-input" placeholder="輸入您的電子郵件" required>
+              <button type="submit" class="option-button">訂閱</button>
+            </form>
+          </div>
+        </div>
+
+        <!-- 瀏覽器通知 -->
+        <div class="subscription-option">
+          <div class="option-icon">🔔</div>
+          <div class="option-content">
+            <h3>瀏覽器通知</h3>
+            <p>直接在瀏覽器中收到新內容通知</p>
+            <button id="notify-btn" class="option-button">啟用通知</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/subscription.js"></script>
+<script>
+// 檢視模式切換功能
+document.addEventListener('DOMContentLoaded', function() {
+  const gridViewBtn = document.getElementById('grid-view-btn');
+  const listViewBtn = document.getElementById('list-view-btn');
+  const postContainer = document.getElementById('post-container');
+  
+  // 載入儲存的檢視模式
+  const savedView = localStorage.getItem('viewMode') || 'grid';
+  if (savedView === 'list') {
+    postContainer.classList.add('list-view');
+    gridViewBtn.classList.remove('active');
+    listViewBtn.classList.add('active');
+  }
+  
+  gridViewBtn.addEventListener('click', function() {
+    postContainer.classList.remove('list-view');
+    gridViewBtn.classList.add('active');
+    listViewBtn.classList.remove('active');
+    localStorage.setItem('viewMode', 'grid');
+  });
+  
+  listViewBtn.addEventListener('click', function() {
+    postContainer.classList.add('list-view');
+    gridViewBtn.classList.remove('active');
+    listViewBtn.classList.add('active');
+    localStorage.setItem('viewMode', 'list');
+  });
+});
+</script>
 </body>
 </html>
