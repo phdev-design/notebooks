@@ -71,7 +71,6 @@
       </article>
     {%- endfor -%}
   </div>
-
   {# 【新增】載入更多按鈕的容器 #}
   {# 只在文章總數 > 20 的時候才顯示這個按鈕 #}
   {%- if posts.length > 20 -%}
@@ -81,6 +80,9 @@
   {%- endif -%}
 </main>
 
+  {# 在這裡引入我們建立的 footer #}
+  {% include "footer.njk" %}
+  
 <!-- 訂閱彈窗 (無需變更) -->
 <div id="subscribe-modal" class="modal">
   <div class="modal-content">
@@ -97,7 +99,6 @@
     </div>
   </div>
 </div>
-
 <script src="/js/subscription.js"></script>
 <script>
 // 檢視模式切換功能 (無需變更)

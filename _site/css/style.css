@@ -583,3 +583,50 @@ main {
 #load-more-btn.hidden {
     display: none;
 }
+
+/* --- Footer Styles with Social Icons --- */
+footer {
+  text-align: center;
+  padding: 30px 20px;
+  margin-top: 40px;
+  background-color: #343a40; /* 非常淺的灰色背景 */
+  border-top: 1px solid #343a40;
+}
+
+.social-links {
+  margin-bottom: 20px;
+}
+
+.social-links a {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  line-height: 40px; /* 讓文字垂直置中 */
+  border-radius: 50%; /* 圓形 */
+  background-color: #343a40; /* 深色背景 */
+  color: #fff; /* 白色圖示/文字 */
+  text-decoration: none;
+  margin: 0 8px;
+  font-weight: bold;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.social-links a:hover {
+  background-color: #007bff; /* 藍色 */
+  transform: translateY(-3px); /* 向上浮動效果 */
+}
+
+footer p {
+  margin: 8px 0;
+  font-size: 0.9em;
+  color: #6c757d;
+}
+
+footer p a {
+  color: #fff;
+  text-decoration: none;
+}
+
+footer p a:hover {
+  text-decoration: underline;
+}
