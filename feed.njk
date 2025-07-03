@@ -17,11 +17,11 @@ eleventyExcludeFromCollections: true
     {%- for post in posts %}
     <item>
       <title>{{ post.title }}</title>
-      <link>https://notebooks.phdev.uk{{ post.url }}</link>
+      <link>{{ post.url }}</link>
       {%- if post.date -%}
       <pubDate>{{ post.date | isoDate }}</pubDate>
       {%- endif -%}
-      <guid>https://notebooks.phdev.uk{{ post.url }}</guid>
+      <guid>{{ post.url }}</guid>
       <description><![CDATA[{{ post.description | stripHtml }}]]></description>
       {%- if post.tags and post.tags.length -%}
       <category>{{ post.tags | join(", ") }}</category>
