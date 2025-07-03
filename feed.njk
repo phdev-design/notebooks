@@ -9,21 +9,23 @@ eleventyExcludeFromCollections: true
     <link>https://notebooks.phdev.uk</link>
     <description>分享程式開發筆記與專案連結</description>
     <language>zh-TW</language>
-    {# 【修正】增加一個判斷，只有在 collections.posts 有內容時，才輸出 lastBuildDate #}
-    {%- if collections.posts.length -%}
-    <lastBuildDate>{{ collections.posts[0].data.date | isoDate }}</lastBuildDate>
+    {# 使用posts數據而不是collections.posts #}
+    {%- if posts.length -%}
+    <lastBuildDate>{{ posts[0].date | isoDate }}</lastBuildDate>
     {%- endif -%}
     <atom:link href="https://notebooks.phdev.uk/feed.xml" rel="self" type="application/rss+xml"/>
-    {%- for post in collections.posts %}
+    {%- for post in posts %}
     <item>
-      <title>{{ post.data.title }}</title>
-      <link>{{ post.data.url }}</link>
-      {# 【修正】同樣增加判斷，確保日期存在才進行格式化 #}
-      {%- if post.data.date -%}
-      <pubDate>{{ post.data.date | isoDate }}</pubDate>
+      <title>{{ post.title }}</title>
+      <link>https://notebooks.phdev.uk{{ post.url }}</link>
+      {%- if post.date -%}
+      <pubDate>{{ post.date | isoDate }}</pubDate>
       {%- endif -%}
-      <guid>{{ post.data.url }}</guid>
-      <description><![CDATA[{{ post.data.description | stripHtml }}]]></description>
+      <guid>https://notebooks.phdev.uk{{ post.url }}</guid>
+      <description><![CDATA[{{ post.description | stripHtml }}]]></description>
+      {%- if post.tags and post.tags.length -%}
+      <category>{{ post.tags | join(", ") }}</category>
+      {%- endif -%}
     </item>
     {%- endfor %}
   </channel>
