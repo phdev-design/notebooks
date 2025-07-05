@@ -7,6 +7,8 @@ class SubscriptionManager {
 
   init() {
     this.bindEvents();
+    // [新增] 頁面載入時，設定通知按鈕的初始狀態
+    this.updateNotifyButtonState();
     this.checkForUpdates();
   }
 
@@ -53,6 +55,30 @@ class SubscriptionManager {
     }
   }
 
+  // [新增] 更新「啟用通知」按鈕的 UI 狀態
+  updateNotifyButtonState() {
+    const notifyBtn = document.getElementById('notify-btn');
+    if (!notifyBtn) return;
+
+    // 建議在您的 CSS 檔案中加入 .disabled 樣式，例如：
+    // #notify-btn.disabled { cursor: not-allowed; background-color: #ccc; }
+    const isSiteEnabled = localStorage.getItem('browser-notifications') === 'true';
+
+    if (Notification.permission === 'denied') {
+      notifyBtn.textContent = '權限已封鎖';
+      notifyBtn.disabled = true;
+      notifyBtn.classList.add('disabled');
+    } else if (isSiteEnabled && Notification.permission === 'granted') {
+      notifyBtn.textContent = '已啟用通知';
+      notifyBtn.disabled = true;
+      notifyBtn.classList.add('disabled');
+    } else {
+      notifyBtn.textContent = '啟用通知';
+      notifyBtn.disabled = false;
+      notifyBtn.classList.remove('disabled');
+    }
+  }
+
   // 複製 RSS URL
   async copyRSSUrl() {
     const rssUrl = `${window.location.origin}/feed.xml`;
@@ -60,7 +86,6 @@ class SubscriptionManager {
       await navigator.clipboard.writeText(rssUrl);
       this.showMessage('RSS 網址已複製到剪貼簿！', 'success');
     } catch (err) {
-      // 降級方案，處理 navigator.clipboard 不可用的情況
       const textArea = document.createElement('textarea');
       textArea.value = rssUrl;
       textArea.style.position = 'fixed';
@@ -82,13 +107,10 @@ class SubscriptionManager {
     e.preventDefault();
     const emailInput = document.getElementById('email-input');
     const email = emailInput.value.trim();
-
     if (!this.isValidEmail(email)) {
       this.showMessage('請輸入有效的電子郵件地址', 'error');
       return;
     }
-
-    // 儲存到本地 localStorage
     if (!this.subscribers.includes(email)) {
       this.subscribers.push(email);
       this.saveSubscribers();
@@ -99,36 +121,31 @@ class SubscriptionManager {
     }
   }
 
-  // [修改] 請求瀏覽器通知權限 (邏輯優化)
+  // 請求瀏覽器通知權限 (邏輯優化)
   async requestNotificationPermission() {
-    // 步驟 1: 檢查瀏覽器是否支援通知功能
     if (!('Notification' in window)) {
       this.showMessage('您的瀏覽器不支援通知功能', 'error');
       return;
     }
     
-    // 步驟 2: 優先檢查本站的設定，判斷功能是否已經被使用者點擊啟用過
     const isSiteEnabled = localStorage.getItem('browser-notifications') === 'true';
     if (isSiteEnabled && Notification.permission === 'granted') {
       this.showMessage('您已啟用瀏覽器通知功能', 'info');
-      return; // 直接結束，不重複執行
+      return;
     }
 
-    // 步驟 3: 根據瀏覽器層級的權限狀態進行處理
     switch (Notification.permission) {
       case 'granted':
-        // 情況 A: 瀏覽器權限已授予，但本站功能未啟用 (例如使用者清除了 localStorage)
-        // 直接啟用功能即可
         this.enableBrowserNotifications();
         break;
 
       case 'denied':
-        // 情況 B: 瀏覽器權限被明確拒絕
         this.showMessage('通知權限已被拒絕，請在瀏覽器設定中啟用', 'error');
+        // [新增] 當權限被拒絕時，也更新按鈕狀態
+        this.updateNotifyButtonState();
         break;
 
       case 'default':
-        // 情況 C: 尚未詢問過權限，向使用者發出請求
         const permission = await Notification.requestPermission();
         if (permission === 'granted') {
           this.enableBrowserNotifications();
@@ -139,20 +156,20 @@ class SubscriptionManager {
     }
   }
 
-  // [修改] 啟用瀏覽器通知 (職責單一化)
+  // 啟用瀏覽器通知 (職責單一化)
   enableBrowserNotifications() {
-    // 這個函式現在只負責「啟用」的動作，不再做重複檢查
     localStorage.setItem('browser-notifications', 'true');
     localStorage.setItem('last-check', Date.now().toString());
     
-    // 顯示成功訊息
     this.showMessage('瀏覽器通知已啟用！', 'success');
     
-    // 發送一則歡迎通知，確認功能正常
     new Notification('PHDEV Notebooks', {
       body: '瀏覽器通知已成功啟用！',
-      icon: '/img/logo.png' // 請確保此路徑正確
+      icon: '/img/logo.png'
     });
+
+    // [新增] 啟用成功後，更新按鈕狀態
+    this.updateNotifyButtonState();
   }
 
   // 檢查更新
@@ -164,7 +181,6 @@ class SubscriptionManager {
     const now = Date.now();
     const oneHour = 60 * 60 * 1000;
 
-    // 每小時檢查一次
     if (!lastCheck || (now - parseInt(lastCheck)) > oneHour) {
       try {
         const response = await fetch('/feed.xml');
@@ -222,25 +238,17 @@ class SubscriptionManager {
 
   // 顯示訊息
   showMessage(message, type = 'info') {
-    // 移除現有訊息
     const existingMessage = document.querySelector('.message-toast');
     if (existingMessage) {
       existingMessage.remove();
     }
-
-    // 創建新訊息
     const toast = document.createElement('div');
     toast.className = `message-toast message-${type}`;
     toast.textContent = message;
-    
     document.body.appendChild(toast);
-    
-    // 觸發動畫
     setTimeout(() => {
       toast.classList.add('show');
     }, 100);
-
-    // 自動隱藏
     setTimeout(() => {
       toast.classList.remove('show');
       setTimeout(() => {
