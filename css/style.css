@@ -125,20 +125,10 @@ main {
   transform: translateY(-4px);
 }
 
-/* ================================================== */
-/* ✨ 關鍵佈局修正 (CSS Grid 法) ✨                */
-/* ================================================== */
-
-/* ✨ 核心修正 1: 讓 a 標籤成為 Grid 容器 */
 .card-link-wrapper {
   text-decoration: none;
   color: inherit;
   display: grid;
-  /* ✨ 核心修正 2: 定義三行佈局
-     - 第一行 (圖示) 高度自動
-     - 第二行 (間隔) 會佔滿所有剩餘的垂直空間 (1fr)
-     - 第三行 (內容) 高度自動
-  */
   grid-template-rows: auto 1fr auto;
   height: 100%;
   padding: 20px;
@@ -150,7 +140,6 @@ main {
   line-height: 1;
 }
 
-/* 間隔元素不需要任何樣式，它會自動被放到 Grid 的第二行 */
 .card-spacer { }
 
 .card-content h2 {
@@ -173,18 +162,16 @@ main {
   white-space: nowrap;
 }
 
-/* 在日期後面加上間距 */
 .card-meta > * + * {
   margin-left: 0.5ch;
 }
 
 .tag-popup-container {
-  position: relative; /* 為了讓彈出視窗可以基於此定位 */
+  position: relative;
   display: flex;
   align-items: center;
 }
 
-/* 用偽元素加上分隔點 */
 .tag-popup-container::before {
   content: '・';
   color: #bdc1c6;
@@ -199,15 +186,14 @@ main {
 }
 .card-grid.list-view .card { width: 100%; aspect-ratio: auto; height: auto; }
 .card-grid.list-view .card-link-wrapper {
-  display: flex; /* 在列表模式中切換回 Flexbox */
-  grid-template-rows: none; /* 清除 Grid 規則 */
+  display: flex;
+  grid-template-rows: none;
   flex-direction: row;
   align-items: center;
   padding: 12px 16px;
   gap: 16px;
 }
 
-/* 在列表模式中，隱藏間隔元素 */
 .card-grid.list-view .card-spacer {
   display: none;
 }
@@ -411,6 +397,19 @@ main {
   transform: translateY(-1px);
 }
 
+/*
+  [新增] 停用按鈕的樣式
+  當按鈕被加上 disabled 屬性或 .disabled class 時，
+  這些樣式會生效，讓按鈕看起來是不可點擊的狀態。
+*/
+.option-button:disabled,
+.option-button.disabled {
+  background-color: #5f6368;
+  color: #9aa0a6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .email-form {
   display: flex;
   gap: 8px;
@@ -555,8 +554,8 @@ main {
 
 /* 「載入更多」按鈕的容器樣式 */
 .load-more-container {
-  text-align: center; /* 讓按鈕置中 */
-  padding: 2rem 0;    /* 上下留白 */
+  text-align: center;
+  padding: 2rem 0;
 }
 
 /* 「載入更多」按鈕的樣式 */
@@ -579,7 +578,6 @@ main {
   transform: scale(0.98);
 }
 
-/* 如果按鈕被隱藏了 (當所有文章都載入後) */
 #load-more-btn.hidden {
     display: none;
 }
@@ -589,7 +587,7 @@ footer {
   text-align: center;
   padding: 30px 20px;
   margin-top: 40px;
-  background-color: #343a40; /* 非常淺的灰色背景 */
+  background-color: #343a40;
   border-top: 1px solid #343a40;
 }
 
@@ -601,10 +599,10 @@ footer {
   display: inline-block;
   width: 40px;
   height: 40px;
-  line-height: 40px; /* 讓文字垂直置中 */
-  border-radius: 50%; /* 圓形 */
-  background-color: #343a40; /* 深色背景 */
-  color: #fff; /* 白色圖示/文字 */
+  line-height: 40px;
+  border-radius: 50%;
+  background-color: #343a40;
+  color: #fff;
   text-decoration: none;
   margin: 0 8px;
   font-weight: bold;
@@ -612,8 +610,8 @@ footer {
 }
 
 .social-links a:hover {
-  background-color: #007bff; /* 藍色 */
-  transform: translateY(-3px); /* 向上浮動效果 */
+  background-color: #007bff;
+  transform: translateY(-3px);
 }
 
 footer p {
