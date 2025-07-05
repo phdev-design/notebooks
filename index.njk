@@ -45,13 +45,22 @@
     </ul>
   </nav>
 
+  <!-- 【修正】加入了檢視模式切換按鈕，您的 JS 需要它們 -->
   <div class="controls-wrapper">
-    </div>
+    <button id="grid-view-btn" class="view-btn active" aria-label="網格檢視">
+        <!-- 建議使用 SVG 圖示 -->
+        網格
+    </button>
+    <button id="list-view-btn" class="view-btn" aria-label="列表檢視">
+        <!-- 建議使用 SVG 圖示 -->
+        列表
+    </button>
+  </div>
   
   <div class="card-grid" id="post-container">
     {# Nunjucks 的 for 迴圈提供 loop.index0 (從0開始的索引) #}
     {%- for post in posts -%}
-      {# 【關鍵修改】如果索引值 >= 21，就加上 post-hidden 這個 class #}
+      {# 如果索引值 >= 21，就加上 post-hidden 這個 class #}
       <article class="card {% if loop.index0 >= 21 %}post-hidden{% endif %}">
         <a href="{{ post.url }}" class="card-link-wrapper" target="_blank" rel="noopener noreferrer">
           <div class="card-icon">{{ post.icon or '📄' }}</div>
@@ -71,17 +80,17 @@
       </article>
     {%- endfor -%}
   </div>
-  {# 【新增】載入更多按鈕的容器 #}
-  {# 只在文章總數 > 20 的時候才顯示這個按鈕 #}
-  {%- if posts.length > 20 -%}
+
+  {# 只在文章總數 > 21 的時候才顯示這個按鈕 #}
+  {%- if posts.length > 21 -%}
   <div class="load-more-container">
     <button id="load-more-btn">載入更多</button>
   </div>
   {%- endif -%}
 </main>
 
-  {# 在這裡引入我們建立的 footer #}
-  {% include "footer.njk" %}
+{# 在這裡引入我們建立的 footer #}
+{% include "footer.njk" %}
   
 <!-- 訂閱彈窗 (無需變更) -->
 <div id="subscribe-modal" class="modal">
@@ -99,71 +108,68 @@
     </div>
   </div>
 </div>
+
+<!-- 【修正】只載入一次 subscription.js -->
 <script src="/js/subscription.js"></script>
+
+<!-- 【修正】將所有頁面腳本合併到一個 DOMContentLoaded 事件中，並移除重複及不完整的程式碼 -->
 <script>
-// 檢視模式切換功能 (無需變更)
 document.addEventListener('DOMContentLoaded', function() {
+  
+  // --- 檢視模式切換功能 ---
   const gridViewBtn = document.getElementById('grid-view-btn');
   const listViewBtn = document.getElementById('list-view-btn');
   const postContainer = document.getElementById('post-container');
-  const savedView = localStorage.getItem('viewMode') || 'grid';
-  if (savedView === 'list') {
-    postContainer.classList.add('list-view');
-    gridViewBtn.classList.remove('active');
-    listViewBtn.classList.add('active');
-  }
-  gridViewBtn.addEventListener('click', function() {
-    postContainer.classList.remove('list-view');
-    gridViewBtn.classList.add('active');
-    listViewBtn.classList.remove('active');
-    localStorage.setItem('viewMode', 'grid');
-  });
-  listViewBtn.addEventListener('click', function() {
-    postContainer.classList.add('list-view');
-    gridViewBtn.classList.remove('active');
-    listViewBtn.classList.add('active');
-    localStorage.setItem('viewMode', 'list');
-  });
-});
-</script>
-
-<script src="/js/subscription.js"></script>
-<script>
-// 檢視模式切換功能 (無需變更)
-document.addEventListener('DOMContentLoaded', function() {
-  // ... 您原有的檢視切換程式碼 ...
-});
-</script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const loadMoreBtn = document.getElementById('load-more-btn');
   
-  // 如果頁面上找不到這個按鈕，就直接結束，避免錯誤
-  if (!loadMoreBtn) {
-    return;
-  }
-  
-  // 設定每次點擊要載入幾篇文章
-  const postsToLoad = 21;
-
-  loadMoreBtn.addEventListener('click', function() {
-    // 找出所有還被隱藏的文章
-    const hiddenPosts = document.querySelectorAll('.post-hidden');
+  // 確保元素都存在才執行，增加程式碼穩健性
+  if (gridViewBtn && listViewBtn && postContainer) {
+    const savedView = localStorage.getItem('viewMode') || 'grid';
     
-    // 從中選取接下來要顯示的文章 (最多 postsToLoad 篇)
-    const postsToShow = Array.from(hiddenPosts).slice(0, postsToLoad);
+    if (savedView === 'list') {
+      postContainer.classList.add('list-view');
+      gridViewBtn.classList.remove('active');
+      listViewBtn.classList.add('active');
+    }
     
-    postsToShow.forEach(post => {
-      post.classList.remove('post-hidden');
+    gridViewBtn.addEventListener('click', function() {
+      postContainer.classList.remove('list-view');
+      gridViewBtn.classList.add('active');
+      listViewBtn.classList.remove('active');
+      localStorage.setItem('viewMode', 'grid');
     });
     
-    // 如果點擊後，再也找不到被隱藏的文章，就代表全部載入完畢
-    // 這時就可以把「載入更多」按鈕也隱藏起來
-    if (document.querySelectorAll('.post-hidden').length === 0) {
-      loadMoreBtn.classList.add('hidden'); // 使用 class 來隱藏，而不是直接改 style
-    }
-  });
+    listViewBtn.addEventListener('click', function() {
+      postContainer.classList.add('list-view');
+      gridViewBtn.classList.remove('active');
+      listViewBtn.classList.add('active');
+      localStorage.setItem('viewMode', 'list');
+    });
+  }
+
+  // --- 載入更多功能 ---
+  const loadMoreBtn = document.getElementById('load-more-btn');
+  
+  // 如果頁面上找不到這個按鈕，就不執行後續程式碼
+  if (loadMoreBtn) {
+    const postsToLoad = 21; // 每次點擊要載入幾篇文章
+
+    loadMoreBtn.addEventListener('click', function() {
+      // 找出所有還被隱藏的文章
+      const hiddenPosts = document.querySelectorAll('.post-hidden');
+      
+      // 從中選取接下來要顯示的文章
+      const postsToShow = Array.from(hiddenPosts).slice(0, postsToLoad);
+      
+      postsToShow.forEach(post => {
+        post.classList.remove('post-hidden');
+      });
+      
+      // 如果點擊後，再也找不到被隱藏的文章，就隱藏「載入更多」按鈕
+      if (document.querySelectorAll('.post-hidden').length === 0) {
+        loadMoreBtn.style.display = 'none'; // 直接隱藏按鈕
+      }
+    });
+  }
 });
 </script>
 
