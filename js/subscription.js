@@ -60,14 +60,20 @@ class SubscriptionManager {
       await navigator.clipboard.writeText(rssUrl);
       this.showMessage('RSS 網址已複製到剪貼簿！', 'success');
     } catch (err) {
-      // 降級方案
+      // 降級方案，處理 navigator.clipboard 不可用的情況
       const textArea = document.createElement('textarea');
       textArea.value = rssUrl;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
       document.body.appendChild(textArea);
       textArea.select();
-      document.execCommand('copy');
+      try {
+        document.execCommand('copy');
+        this.showMessage('RSS 網址已複製到剪貼簿！', 'success');
+      } catch (copyErr) {
+        this.showMessage('複製失敗，請手動複製網址', 'error');
+      }
       document.body.removeChild(textArea);
-      this.showMessage('RSS 網址已複製到剪貼簿！', 'success');
     }
   }
 
@@ -82,7 +88,7 @@ class SubscriptionManager {
       return;
     }
 
-    // 儲存到本地
+    // 儲存到本地 localStorage
     if (!this.subscribers.includes(email)) {
       this.subscribers.push(email);
       this.saveSubscribers();
@@ -93,45 +99,60 @@ class SubscriptionManager {
     }
   }
 
-  // 請求瀏覽器通知權限
+  // [修改] 請求瀏覽器通知權限 (邏輯優化)
   async requestNotificationPermission() {
+    // 步驟 1: 檢查瀏覽器是否支援通知功能
     if (!('Notification' in window)) {
       this.showMessage('您的瀏覽器不支援通知功能', 'error');
       return;
     }
-
-    if (Notification.permission === 'granted') {
-      this.enableBrowserNotifications();
-      this.showMessage('瀏覽器通知已啟用！', 'success');
-      return;
+    
+    // 步驟 2: 優先檢查本站的設定，判斷功能是否已經被使用者點擊啟用過
+    const isSiteEnabled = localStorage.getItem('browser-notifications') === 'true';
+    if (isSiteEnabled && Notification.permission === 'granted') {
+      this.showMessage('您已啟用瀏覽器通知功能', 'info');
+      return; // 直接結束，不重複執行
     }
 
-    if (Notification.permission !== 'denied') {
-      const permission = await Notification.requestPermission();
-      if (permission === 'granted') {
+    // 步驟 3: 根據瀏覽器層級的權限狀態進行處理
+    switch (Notification.permission) {
+      case 'granted':
+        // 情況 A: 瀏覽器權限已授予，但本站功能未啟用 (例如使用者清除了 localStorage)
+        // 直接啟用功能即可
         this.enableBrowserNotifications();
-        this.showMessage('瀏覽器通知已啟用！', 'success');
-      } else {
-        this.showMessage('需要允許通知權限才能啟用此功能', 'error');
-      }
-    } else {
-      this.showMessage('通知權限已被拒絕，請在瀏覽器設定中啟用', 'error');
+        break;
+
+      case 'denied':
+        // 情況 B: 瀏覽器權限被明確拒絕
+        this.showMessage('通知權限已被拒絕，請在瀏覽器設定中啟用', 'error');
+        break;
+
+      case 'default':
+        // 情況 C: 尚未詢問過權限，向使用者發出請求
+        const permission = await Notification.requestPermission();
+        if (permission === 'granted') {
+          this.enableBrowserNotifications();
+        } else {
+          this.showMessage('需要允許通知權限才能啟用此功能', 'error');
+        }
+        break;
     }
   }
 
-  // 啟用瀏覽器通知
+  // [修改] 啟用瀏覽器通知 (職責單一化)
   enableBrowserNotifications() {
-    const isEnabled = localStorage.getItem('browser-notifications') === 'true';
-    if (!isEnabled) {
-      localStorage.setItem('browser-notifications', 'true');
-      localStorage.setItem('last-check', Date.now().toString());
-      
-      // 發送測試通知
-      new Notification('PHDEV Notebooks', {
-        body: '瀏覽器通知已成功啟用！',
-        icon: '/img/logo.png'
-      });
-    }
+    // 這個函式現在只負責「啟用」的動作，不再做重複檢查
+    localStorage.setItem('browser-notifications', 'true');
+    localStorage.setItem('last-check', Date.now().toString());
+    
+    // 顯示成功訊息
+    this.showMessage('瀏覽器通知已啟用！', 'success');
+    
+    // 發送一則歡迎通知，確認功能正常
+    new Notification('PHDEV Notebooks', {
+      body: '瀏覽器通知已成功啟用！',
+      icon: '/img/logo.png' // 請確保此路徑正確
+    });
   }
 
   // 檢查更新
