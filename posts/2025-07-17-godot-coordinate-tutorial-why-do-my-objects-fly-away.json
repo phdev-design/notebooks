@@ -1,0 +1,13 @@
+{
+  "icon": "🕹️",
+  "url": "https://phproject.phdev.uk/Why-Do-My-Objects-Fly-Away.html",
+  "title": "Godot Coordinate Tutorial: Why Do My Objects Fly Away?",
+  "description": "A tutorial explaining the local vs global coordinate system in Godot and how to avoid common mistakes when positioning objects in the game world.",
+  "tags": [
+    "godot",
+    "tutorial",
+    "coordinates",
+    "game development"
+  ],
+  "date": "2025-07-17T15:30:39.166Z"
+}
