@@ -1,0 +1,14 @@
+{
+  "icon": "🐍",
+  "url": "https://phproject.phdev.uk/Brigadier-Update-Report.html",
+  "title": "Brigadier.py Python 3 更新報告",
+  "description": "一份技術報告，詳細記錄了將用於下載 Apple Boot Camp 驅動程式的 `brigadier.py` 工具從已停止支援的 Python 2 遷移到 Python 3 的過程，涵蓋了語法差異、庫變更和最終的成功重構。",
+  "tags": [
+    "Python",
+    "Python 3",
+    "程式碼重構",
+    "技術更新",
+    "Boot Camp"
+  ],
+  "date": "2025-08-15T16:09:58.632Z"
+}
