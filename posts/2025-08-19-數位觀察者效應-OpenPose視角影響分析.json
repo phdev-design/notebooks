@@ -1,0 +1,14 @@
+{
+  "icon": "🏃",
+  "url": "https://phproject.phdev.uk/The-Digital-Observer-Effect.html",
+  "title": "數位觀察者效應：OpenPose視角影響分析",
+  "description": "一份互動式圖表，深入分析相機視角（如縮短效應與透視失真）如何影響OpenPose運動分析的準確性，並提供數據採集的最佳實踐建議。",
+  "tags": [
+    "OpenPose",
+    "運動分析",
+    "電腦視覺",
+    "數據可視化",
+    "生物力學"
+  ],
+  "date": "2025-08-19T17:33:32.623Z"
+}
